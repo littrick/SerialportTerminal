@@ -67,7 +67,7 @@ async fn connect(name: String, baud_rate: u32) -> anyhow::Result<()> {
     let terminal = Terminal::new();
     let (mut reader, mut writer) = terminal.split();
     writer
-        .write_all(b"Connected to serial port. Press `END END` to exit.\n")
+        .write_all(b"Connected to serial port. Press `CTRL+A CTRL+A` to exit.\n")
         .await?;
 
     let port = one_port.clone();
@@ -97,8 +97,8 @@ async fn connect(name: String, baud_rate: u32) -> anyhow::Result<()> {
             let n = reader.read(buf.as_mut_slice()).await.unwrap();
             if n > 0 {
                 if n == 1 {
-                    if ctl_a_pressed && buf[0] == 0x03 {
-                        println!("Ctrl+A Ctrl+C detected. Exiting...");
+                    if ctl_a_pressed && buf[0] == 0x01 {
+                        println!("Ctrl+A Ctrl+A detected. Exiting...");
                         break;
                     }
                     ctl_a_pressed = buf[0] == 0x01; // Ctrl+A
