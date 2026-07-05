@@ -30,5 +30,5 @@ done
 EOF
 ```
 ```sh
-git commit -am "update workflow" && git push
+git commit -am "update workflow" && git pull --rabase && git push
 ```
