@@ -32,3 +32,9 @@ EOF
 ```sh
 git commit -am "update workflow" && git pull --rabase && git push
 ```
+```sh
+cargo build --release --message-format=json > build_msg.json
+```
+```sh
+jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r build_msg.json
+```
