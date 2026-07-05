@@ -56,22 +56,17 @@ jobs:
       - name: Rename artifacts
         shell: bash
         run: |
-          mkdir -p target/artifacts
+          mkdir -p target/artifacts/${{ matrix.target }}
           executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r target/build_msg.json)
-          file_name=$(basename "$executable_path")
-          base_name="${file_name%.*}"
-          extension="${file_name##*.}"
-          if [[ "$file_name" == "$base_name" ]]; then
-            new_file_name="${base_name}-${{ matrix.target }}"
-          else
-            new_file_name="${base_name}-${{ matrix.target }}.${extension}"
-          fi
-          mv "$executable_path" "target/artifacts/${new_file_name}"
-          echo "new_file_name=${new_file_name}" >> $GITHUB_ENV
+          cp "$executable_path" "target/artifacts/${{ matrix.target }}/"
+          artifact_path=target/artifacts/$(basename "$executable_path")_${{ matrix.target }}/.tar.gz
+          tar -czxf "$artifact_path" -C "target/artifacts/" "${{ matrix.target }}"
+
+          echo "artifact_path=${artifact_path}" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: target/artifacts/${{ env.new_file_name }}
+          path: ${{ env.artifact_path }}
           retention-days: 1
