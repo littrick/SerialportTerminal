@@ -30,7 +30,7 @@ done
 EOF
 ```
 ```sh
-git commit -am "update workflow" && git pull --rabase && git push
+git commit -am "update workflow" && git pull --rebase && git push
 ```
 ```sh
 cargo build --release --message-format=json > build_msg.json
