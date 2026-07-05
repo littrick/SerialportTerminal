@@ -28,3 +28,16 @@ jobs:
         steps:
             - run: 'echo "Target platform: ${{ matrix.target }}"'
             - run: 'echo "Operating system: ${{ matrix.os }}"'
+
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Release build
+              run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-path target/artifacts/${{ matrix.target }}
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                  name: ${{ matrix.target }}
+                  path: target/artifacts/${{ matrix.target }}
+                  retention-days: 1
