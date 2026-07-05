@@ -59,7 +59,8 @@ jobs:
           mkdir -p target/artifacts/${{ matrix.target }}
           executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r target/build_msg.json)
           cp "$executable_path" "target/artifacts/${{ matrix.target }}/"
-          artifact_path=target/artifacts/${$(basename "$executable_path")%.*}_${{ matrix.target }}.tar.gz
+          executable_name=$(basename "$executable_path")
+          artifact_path=target/artifacts/${executable_name%.*}_${{ matrix.target }}.tar.gz
           tar -zcf "$artifact_path" -C "target/artifacts/" "${{ matrix.target }}"
 
           echo "artifact_path=${artifact_path}" >> $GITHUB_ENV
