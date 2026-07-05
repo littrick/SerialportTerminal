@@ -55,15 +55,15 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          mkdir -p out/artifacts
-          executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r out/build_msg.json)
+          mkdir -p target/artifacts
+          executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r target/build_msg.json)
           file_name=$(basename "$executable_path")
           new_file_name="${file_name%.*}-${{ matrix.target }}${executable_path##*.}"
-          mv "$executable_path" "out/artifacts/${new_file_name}"
+          mv "$executable_path" "target/artifacts/${new_file_name}"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: out/artifacts/${new_file_name}
+          path: target/artifacts/${new_file_name}
           retention-days: 1
