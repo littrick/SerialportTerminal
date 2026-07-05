@@ -30,14 +30,20 @@ jobs:
       - name: Show matrix
         run: 'echo "Target: ${{ matrix.target }} Operating system: ${{ matrix.os }}"'
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: update linker
+        if: startsWith(matrix.target, 'aarch64-unknown-linux-musl')
+        run: |
+          sudo apt-get update
+          sudo apt-get install lld -y
 
       - name: Change to nightly toolchain
         run: rustup default nightly
 
       - name: Install target
         run: rustup target add ${{ matrix.target }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Release build
         run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-dir target/artifacts/${{ matrix.target }}
