@@ -1,0 +1,59 @@
+name: Release Version
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Type of version bump: major, minor, patch"
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+      version:
+        description: "Set specific version (overrides bump_type, optional)"
+        default: ""
+        type: string
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Cargo Edit and toml-cli
+        run: |
+          cargo install cargo-edit
+          cargo install toml-cli
+
+      - name: Bump Version
+        run: |
+          if [ "${{ inputs.version }}" != "" ]; then
+            cargo set-version ${{ inputs.version }}
+          else
+            cargo set-version --bump ${{ inputs.bump_type }}
+          fi
+
+      - name: Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Bump version to ${{ inputs.version || 'new version' }}"
+          branch: ${{ github.ref_name }}
+          file_pattern: Cargo.toml
+
+  build:
+    needs: bump-version
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: artifacts
+
+      - name: Show downloaded artifacts
+        run: ls -R target/artifacts
