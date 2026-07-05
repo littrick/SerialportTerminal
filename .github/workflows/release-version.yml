@@ -55,6 +55,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install toml-cli
+        run: cargo install toml-cli
+
       - name: Get Package Version
         run: |
           $version = $(toml get Cargo.toml workspace.package.version)
