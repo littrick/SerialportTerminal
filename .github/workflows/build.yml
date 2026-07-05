@@ -35,7 +35,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-22.04-arm' && matrix.target == 'aarch64-unknown-linux-musl' }}
         run: |
           sudo apt-get update
-          sudo apt-get install aarch64-linux-musl-gcc -y
+          sudo apt-get install musl-dev -y
 
       - name: Change to nightly toolchain
         run: rustup default nightly
