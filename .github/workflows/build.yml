@@ -61,7 +61,7 @@ jobs:
           base_name="${file_name%.*}"
           extension="${file_name##*.}"
           if [[ "$file_name" == "$base_name" ]]; then
-            new_file_name="${file_name}-${{ matrix.target }}"
+            new_file_name="${base_name}-${{ matrix.target }}"
           else
             new_file_name="${base_name}-${{ matrix.target }}.${extension}"
           fi
