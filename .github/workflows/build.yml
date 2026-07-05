@@ -30,7 +30,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Show matrix
+      - name: Build Package
         run: 'echo "Target: ${{ matrix.target }} Operating system: ${{ matrix.os }}"'
 
       - name: update linker
@@ -54,6 +54,7 @@ jobs:
           cargo build --release --target ${{ matrix.target }} --message-format=json > target/build_msg.json
 
       - name: Rename artifacts
+        shell: bash
         run: |
           mkdir -p target/artifacts
           executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r target/build_msg.json)
