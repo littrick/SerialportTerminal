@@ -1,0 +1,4 @@
+[target.aarch64-unknown-linux-musl]
+# clang 编译报错
+# apt install gcc-aarch64-linux-gnu
+linker = "aarch64-linux-musl-gcc"
