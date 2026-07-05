@@ -1,48 +1,46 @@
 name: Build
 on:
-    workflow_dispatch:
+  workflow_dispatch:
 jobs:
-    show-matrix:
-        name: Show matrix
+  show-matrix:
+    name: Show matrix
 
-        strategy:
-            matrix:
-                include:
-                    - os: ubuntu-latest
-                      target:
-                          - aarch64-unknown-linux-gnu
-                          - aarch64-unknown-linux-musl
-                          - x86_64-unknown-linux-gnu
-                          - x86_64-unknown-linux-musl
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
 
-                    - os: macos-latest
-                      target:
-                          - aarch64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
 
-                    - os: windows-latest
-                      target:
-                          - aarch64-pc-windows-msvc
-                          - x86_64-pc-windows-msvc
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
 
-        runs-on: ${{ matrix.os }}
-        steps:
-            - name: Show matrix
-              run: 'echo "Target: ${{ matrix.target }} Operating system: ${{ matrix.os }}"'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Show matrix
+        run: 'echo "Target: ${{ matrix.target }} Operating system: ${{ matrix.os }}"'
 
-            - name: Exit
-              run: exit 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-            - name: Checkout repository
-              uses: actions/checkout@v4
+      - name: Change to nightly toolchain
+        run: rustup default nightly
+      - name: Release build
+        run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-dir target/artifacts/${{ matrix.target }}
 
-            - name: Change to nightly toolchain
-              run: rustup default nightly
-            - name: Release build
-              run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-dir target/artifacts/${{ matrix.target }}
-
-            - name: Upload artifacts
-              uses: actions/upload-artifact@v4
-              with:
-                  name: ${{ matrix.target }}
-                  path: target/artifacts/${{ matrix.target }}
-                  retention-days: 1
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: target/artifacts/${{ matrix.target }}
+          retention-days: 1
