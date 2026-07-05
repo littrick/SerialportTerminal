@@ -49,7 +49,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Release build
-        run: cargo build --release --target ${{ matrix.target }} --message-format=json > out/build_msg.json
+        run: |
+          mkdir -p target
+          cargo build --release --target ${{ matrix.target }} --message-format=json > target/build_msg.json
 
       - name: Rename artifacts
         run: |
