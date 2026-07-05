@@ -29,6 +29,8 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
+            - name: Change to nightly toolchain
+              run: rustup default nightly
             - name: Release build
               run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-dir target/artifacts/${{ matrix.target }}
 
