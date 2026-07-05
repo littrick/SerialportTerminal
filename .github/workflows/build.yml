@@ -35,11 +35,16 @@ jobs:
 
       - name: Change to nightly toolchain
         run: rustup default nightly
+
+      - name: Install target
+        run: rustup target add ${{ matrix.target }}
+
       - name: Release build
         run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-dir target/artifacts/${{ matrix.target }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
+
         with:
           name: ${{ matrix.target }}
           path: target/artifacts/${{ matrix.target }}
