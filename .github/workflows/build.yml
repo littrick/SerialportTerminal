@@ -58,7 +58,13 @@ jobs:
           mkdir -p target/artifacts
           executable_path=$(jq 'select(.reason == "compiler-artifact" and .target.kind[0] == "bin") | .executable' -r target/build_msg.json)
           file_name=$(basename "$executable_path")
-          new_file_name="${file_name%.*}-${{ matrix.target }}${executable_path##*.}"
+          base_name="${file_name%.*}"
+          extension="${file_name##*.}"
+          if [[ "$file_name" == "$base_name" ]]; then
+            new_file_name="${file_name}-${{ matrix.target }}"
+          else
+            new_file_name="${base_name}-${{ matrix.target }}.${extension}"
+          fi
           mv "$executable_path" "target/artifacts/${new_file_name}"
 
       - name: Upload artifacts
