@@ -66,10 +66,11 @@ jobs:
             new_file_name="${base_name}-${{ matrix.target }}.${extension}"
           fi
           mv "$executable_path" "target/artifacts/${new_file_name}"
+          echo "new_file_name=${new_file_name}" >> $GITHUB_ENV
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: target/artifacts/${new_file_name}
+          path: target/artifacts/${{ env.new_file_name }}
           retention-days: 1
