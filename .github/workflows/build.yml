@@ -31,7 +31,7 @@ jobs:
         run: 'echo "Target: ${{ matrix.target }} Operating system: ${{ matrix.os }}"'
 
       - name: update linker
-        if: startsWith(matrix.target, 'aarch64-unknown-linux-musl')
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           sudo apt-get update
           sudo apt-get install lld -y
