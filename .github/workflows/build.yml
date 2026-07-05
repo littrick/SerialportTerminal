@@ -36,7 +36,7 @@ jobs:
               run: cargo build --release --target ${{ matrix.target }} -Z unstable-options --artifact-path target/artifacts/${{ matrix.target }}
 
             - name: Upload artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: ${{ matrix.target }}
                   path: target/artifacts/${{ matrix.target }}
