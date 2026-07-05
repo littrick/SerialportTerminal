@@ -59,11 +59,13 @@ jobs:
         run: cargo install toml-cli
 
       - name: Get Package Version
+        id: get-version
+        shell: bash
         run: |
-          $version = $(toml get Cargo.toml workspace.package.version)
-          $version = $version.Trim('"')
+          version=$(toml get Cargo.toml package.version | tr -d '"')
           echo "Package Version: $version"
-          echo "VERSION=$version" >> $env:GITHUB_ENV
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
   release:
     needs: [build, get-version]
@@ -80,7 +82,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.VERSION }}
-          name: Release ${{ env.VERSION }}
+          tag_name: ${{ needs.get-version.outputs.version }}
+          name: Release ${{ needs.get-version.outputs.version }}
           files: |
             artifacts/**/*
