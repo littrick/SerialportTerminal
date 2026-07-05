@@ -46,15 +46,38 @@ jobs:
     needs: bump-version
     uses: ./.github/workflows/build.yml
 
+  get-version:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get Package Version
+        run: |
+          $version = $(toml get Cargo.toml workspace.package.version)
+          $version = $version.Trim('"')
+          echo "Package Version: $version"
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+
   release:
-    needs: build
+    needs: [build, get-version]
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-          
 
       - name: Show downloaded artifacts
         run: ls -R artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
+          files: |
+            artifacts/**/*
